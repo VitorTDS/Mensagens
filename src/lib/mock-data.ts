@@ -7,14 +7,14 @@ export const mockProfiles: UserProfile[] = [
   {
     id: 'mock-persona-1',
     name: 'Pessoa Um',
-    email: 'persona1@example.com',
+    email: 'user1@example.com',
     avatar: DEFAULT_AVATARS[0],
     created_at: now.toISOString(),
   },
   {
     id: 'mock-persona-2',
     name: 'Pessoa Dois',
-    email: 'persona2@example.com',
+    email: 'user2@example.com',
     avatar: DEFAULT_AVATARS[1],
     created_at: now.toISOString(),
   },

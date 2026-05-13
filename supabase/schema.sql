@@ -6,8 +6,8 @@ language sql
 stable
 as $$
   select lower(coalesce(auth.jwt() ->> 'email', '')) in (
-    'persona1@example.com',
-    'persona2@example.com'
+    'user1@example.com',
+    'user2@example.com'
   );
 $$;
 
