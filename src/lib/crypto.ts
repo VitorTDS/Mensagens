@@ -1,7 +1,11 @@
 const SECRET =
   import.meta.env.VITE_MESSAGE_SECRET ??
   import.meta.env.NEXT_PUBLIC_MESSAGE_SECRET ??
-  'moonchat-local-secret'
+  (import.meta.env.PROD ? undefined : 'moonchat-local-secret')
+
+if (!SECRET) {
+  throw new Error('VITE_MESSAGE_SECRET precisa estar definido em producao.')
+}
 
 function toBase64(bytes: Uint8Array) {
   return btoa(String.fromCharCode(...bytes))

@@ -80,6 +80,7 @@ npm run build
 4. Crie os dois usuarios autorizados em `Authentication > Users`.
 5. Copie `Project URL` e `anon public key` para o `.env`.
 6. Crie o bucket `moonchat-media` caso prefira manualmente.
+7. Defina `VITE_MESSAGE_SECRET` com um valor proprio em producao.
 
 ## Modo mock
 
@@ -120,6 +121,7 @@ Credenciais de desenvolvimento:
 - Para E2EE real, adicione troca de chaves por usuario e gerenciamento seguro de dispositivos.
 - O acesso fica restrito aos emails definidos em `VITE_MOONCHAT_ALLOWED_EMAILS` / `NEXT_PUBLIC_MOONCHAT_ALLOWED_EMAILS`.
 - As imagens ficam em bucket privado e sao resolvidas por URL assinada no cliente autenticado.
+- `VITE_MESSAGE_SECRET` precisa existir em producao para evitar uso de chave previsivel.
 
 ## Proximos passos recomendados
 
