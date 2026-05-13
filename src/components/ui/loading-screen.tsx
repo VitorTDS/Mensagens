@@ -18,7 +18,7 @@ export function LoadingScreen() {
         </div>
         <div className="text-center">
           <p className="font-display text-4xl text-[var(--text-primary)]">{APP_NAME}</p>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">Carregando o seu espaco privado.</p>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">Carregando o seu cantinho.</p>
         </div>
       </motion.div>
     </div>

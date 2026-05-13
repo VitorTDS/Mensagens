@@ -60,7 +60,7 @@ export function AppShell() {
               </button>
               <div className="min-w-0">
                 <p className="truncate font-display text-2xl text-[var(--text-primary)] sm:text-3xl">{APP_NAME}</p>
-                <p className="text-sm text-[var(--text-muted)]">Um lugar so de voces dois.</p>
+                <p className="text-sm text-[var(--text-muted)]">Um cantinho so de voces dois.</p>
               </div>
             </div>
             <div className="flex w-full items-center justify-end gap-3 sm:w-auto">

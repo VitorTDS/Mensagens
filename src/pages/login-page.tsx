@@ -41,14 +41,14 @@ export function LoginPage() {
           </div>
           <div className="min-w-0">
             <p className="truncate font-display text-3xl text-[var(--text-primary)] sm:text-4xl">{APP_NAME}</p>
-            <p className="text-sm text-[var(--text-muted)]">Entrar no espaco de voces.</p>
+            <p className="text-sm text-[var(--text-muted)]">Entrar no nosso cantinho.</p>
           </div>
         </div>
 
         <div className="mb-5 rounded-[1.4rem] border border-[var(--panel-border)] bg-[var(--surface-muted)] p-4 text-sm text-[var(--text-secondary)]">
           <div className="mb-2 flex items-center gap-2">
             <LockKeyhole className="h-4 w-4 text-[var(--accent)]" />
-            <span className="font-medium text-[var(--text-primary)]">Acesso privado</span>
+            <span className="font-medium text-[var(--text-primary)]">Acesso do cantinho</span>
           </div>
           <p>
             {isSupabaseConfigured
