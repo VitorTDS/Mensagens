@@ -1,6 +1,6 @@
-# MoonChat
+# Nosso cantinho
 
-MoonChat e um aplicativo privado de mensagens para casal, construido com React, Vite, TailwindCSS e Supabase. O projeto ja vem com modo mock para desenvolvimento imediato e com estrutura pronta para deploy.
+Nosso cantinho e um aplicativo privado de mensagens para casal, construido com React, Vite, TailwindCSS e Supabase. O projeto ja vem com modo mock para desenvolvimento imediato e com estrutura pronta para deploy.
 
 ## Stack
 

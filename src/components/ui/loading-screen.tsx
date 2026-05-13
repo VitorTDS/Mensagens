@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { MoonStar } from 'lucide-react'
+import { APP_NAME } from '../../lib/constants'
 
 export function LoadingScreen() {
   return (
@@ -16,7 +17,7 @@ export function LoadingScreen() {
           <MoonStar className="h-10 w-10 animate-pulseheart text-[var(--accent)]" />
         </div>
         <div className="text-center">
-          <p className="font-display text-4xl text-[var(--text-primary)]">MoonChat</p>
+          <p className="font-display text-4xl text-[var(--text-primary)]">{APP_NAME}</p>
           <p className="mt-1 text-sm text-[var(--text-muted)]">Carregando o seu espaco privado.</p>
         </div>
       </motion.div>

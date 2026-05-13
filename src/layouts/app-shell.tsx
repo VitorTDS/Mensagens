@@ -6,6 +6,7 @@ import { InstallPrompt } from '../components/install-prompt'
 import { Sidebar } from '../components/sidebar'
 import { useChatContext } from '../hooks/use-chat-context'
 import { useSession } from '../hooks/use-session'
+import { APP_NAME } from '../lib/constants'
 
 export function AppShell() {
   const { user, signOut } = useSession()
@@ -58,7 +59,7 @@ export function AppShell() {
                 {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
               <div className="min-w-0">
-                <p className="truncate font-display text-2xl text-[var(--text-primary)] sm:text-3xl">MoonChat</p>
+                <p className="truncate font-display text-2xl text-[var(--text-primary)] sm:text-3xl">{APP_NAME}</p>
                 <p className="text-sm text-[var(--text-muted)]">Um lugar so de voces dois.</p>
               </div>
             </div>

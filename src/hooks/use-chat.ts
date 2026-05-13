@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { APP_NAME } from '../lib/constants'
 import { playMessageSound } from '../lib/sound'
 import {
   getMessages,
@@ -86,7 +87,7 @@ export function useChat(user: AuthUser | null) {
           lastIncomingRef.current = latestIncoming.id
           playMessageSound(740)
           if (Notification.permission === 'granted') {
-            new Notification('Nova mensagem no MoonChat', {
+            new Notification(`Nova mensagem no ${APP_NAME}`, {
               body: latestIncoming.content || 'Imagem enviada',
             })
           }

@@ -39,8 +39,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'MoonChat',
-        short_name: 'MoonChat',
+        name: 'Nosso cantinho',
+        short_name: 'Nosso cantinho',
         description: 'Mensagens privadas para casal com foco em emocao, design e privacidade.',
         theme_color: '#120d18',
         background_color: '#120d18',

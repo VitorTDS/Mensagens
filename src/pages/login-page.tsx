@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Button } from '../components/ui/button'
+import { APP_NAME } from '../lib/constants'
 import { useSession } from '../hooks/use-session'
 import { isSupabaseConfigured } from '../services/supabase'
 
@@ -39,7 +40,7 @@ export function LoginPage() {
             <MessageCircleHeart className="h-6 w-6 text-[var(--accent)]" />
           </div>
           <div className="min-w-0">
-            <p className="truncate font-display text-3xl text-[var(--text-primary)] sm:text-4xl">MoonChat</p>
+            <p className="truncate font-display text-3xl text-[var(--text-primary)] sm:text-4xl">{APP_NAME}</p>
             <p className="text-sm text-[var(--text-muted)]">Entrar no espaco de voces.</p>
           </div>
         </div>
@@ -72,7 +73,7 @@ export function LoginPage() {
             className="w-full rounded-[1.4rem] border-[var(--panel-border)] bg-[var(--input-bg)] px-4 py-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:ring-0"
           />
           <Button onClick={() => void handleLogin()} disabled={loading} className="h-14 w-full text-base">
-            {loading ? 'Entrando...' : 'Abrir MoonChat'}
+            {loading ? 'Entrando...' : `Abrir ${APP_NAME}`}
           </Button>
         </div>
       </motion.section>

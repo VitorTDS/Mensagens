@@ -1,4 +1,4 @@
-export const APP_NAME = 'MoonChat'
+export const APP_NAME = 'Nosso cantinho'
 const env = import.meta.env
 
 export const RELATIONSHIP_START =
