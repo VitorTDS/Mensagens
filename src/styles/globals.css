@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui;
+  --app-bg: linear-gradient(180deg, #0b141a 0%, #111b21 100%);
+  --panel-bg: rgba(17, 27, 33, 0.92);
+  --panel-bg-strong: #111b21;
+  --panel-border: rgba(134, 150, 160, 0.2);
+  --surface-muted: rgba(255, 255, 255, 0.06);
+  --composer-bg: rgba(32, 44, 51, 0.96);
+  --input-bg: #2a3942;
+  --text-primary: #e9edef;
+  --text-secondary: rgba(233, 237, 239, 0.78);
+  --text-muted: rgba(233, 237, 239, 0.55);
+  --text-soft: rgba(233, 237, 239, 0.4);
+  --accent: #25d366;
+  --bubble-own-bg: #005c4b;
+  --bubble-own-border: rgba(37, 211, 102, 0.24);
+  --bubble-own-text: #e9edef;
+  --bubble-other-bg: #202c33;
+  --bubble-other-border: rgba(255, 255, 255, 0.04);
+  --bubble-other-text: #e9edef;
+}
+
+:root[data-theme='whatsapp-light'] {
+  color-scheme: light;
+  --app-bg: linear-gradient(180deg, #efeae2 0%, #e6ded5 100%);
+  --panel-bg: rgba(255, 255, 255, 0.88);
+  --panel-bg-strong: #ffffff;
+  --panel-border: rgba(17, 27, 33, 0.12);
+  --surface-muted: rgba(17, 27, 33, 0.06);
+  --composer-bg: rgba(255, 255, 255, 0.96);
+  --input-bg: #ffffff;
+  --text-primary: #111b21;
+  --text-secondary: rgba(17, 27, 33, 0.78);
+  --text-muted: rgba(17, 27, 33, 0.56);
+  --text-soft: rgba(17, 27, 33, 0.36);
+  --accent: #25d366;
+  --bubble-own-bg: #d9fdd3;
+  --bubble-own-border: rgba(37, 211, 102, 0.28);
+  --bubble-own-text: #111b21;
+  --bubble-other-bg: #ffffff;
+  --bubble-other-border: rgba(17, 27, 33, 0.08);
+  --bubble-other-text: #111b21;
+}
+
+:root[data-theme='whatsapp-dark'] {
+  color-scheme: dark;
+}
+
+:root[data-theme='midnight'] {
+  color-scheme: dark;
+  --app-bg: radial-gradient(circle at top, rgba(125, 211, 252, 0.12), transparent 28%), linear-gradient(160deg, #020617 0%, #0f172a 48%, #111827 100%);
+  --panel-bg: rgba(8, 15, 31, 0.78);
+  --panel-bg-strong: #0b1120;
+  --panel-border: rgba(148, 163, 184, 0.16);
+  --surface-muted: rgba(148, 163, 184, 0.08);
+  --composer-bg: rgba(11, 17, 32, 0.94);
+  --input-bg: rgba(30, 41, 59, 0.9);
+  --text-primary: #e5eefb;
+  --text-secondary: rgba(229, 238, 251, 0.74);
+  --text-muted: rgba(229, 238, 251, 0.52);
+  --text-soft: rgba(229, 238, 251, 0.34);
+  --accent: #7dd3fc;
+  --bubble-own-bg: #1d4ed8;
+  --bubble-own-border: rgba(125, 211, 252, 0.24);
+  --bubble-own-text: #eff6ff;
+  --bubble-other-bg: #172036;
+  --bubble-other-border: rgba(148, 163, 184, 0.12);
+  --bubble-other-text: #dbeafe;
+}
+
+:root[data-theme='sunset'] {
+  color-scheme: light;
+  --app-bg: linear-gradient(160deg, #fff1e6 0%, #ffd7c2 50%, #ffc0b8 100%);
+  --panel-bg: rgba(255, 250, 246, 0.84);
+  --panel-bg-strong: #fff7f2;
+  --panel-border: rgba(112, 73, 66, 0.14);
+  --surface-muted: rgba(112, 73, 66, 0.08);
+  --composer-bg: rgba(255, 247, 242, 0.96);
+  --input-bg: #fffdfb;
+  --text-primary: #4c2d27;
+  --text-secondary: rgba(76, 45, 39, 0.76);
+  --text-muted: rgba(76, 45, 39, 0.52);
+  --text-soft: rgba(76, 45, 39, 0.34);
+  --accent: #e76f51;
+  --bubble-own-bg: #ffe1cf;
+  --bubble-own-border: rgba(231, 111, 81, 0.24);
+  --bubble-own-text: #4c2d27;
+  --bubble-other-bg: #fff7f2;
+  --bubble-other-border: rgba(112, 73, 66, 0.1);
+  --bubble-other-text: #4c2d27;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  background: #0b0910;
+  color: var(--text-primary);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body.light {
+  background: #f8f1eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
+}
+
+.dark body {
+  background: #0b0910;
+}
+
+@media (min-width: 1024px) {
+  html,
+  body,
+  #root {
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+  }
+}
