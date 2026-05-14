@@ -97,6 +97,19 @@ export function useChat(user: AuthUser | null) {
       })
     })
 
+    const syncMessages = () => {
+      void getMessages().then((next) => {
+        if (!mounted) {
+          return
+        }
+
+        setMessages(next)
+      })
+    }
+
+    const pollingInterval = window.setInterval(syncMessages, 5000)
+    syncMessages()
+
     const unsubscribeTyping = subscribeToTyping((nextTypingUserId) => {
       if (nextTypingUserId !== user.id) {
         setTypingUserId(nextTypingUserId)
@@ -109,6 +122,7 @@ export function useChat(user: AuthUser | null) {
 
     return () => {
       mounted = false
+      window.clearInterval(pollingInterval)
       unsubscribeMessages()
       unsubscribeTyping()
       unsubscribePresence()
