@@ -29,8 +29,11 @@ export function ChatPage() {
     handleToggleFavorite,
   } = useChatContext()
   const bottomRef = useRef<HTMLDivElement | null>(null)
+  const messagesScrollRef = useRef<HTMLDivElement | null>(null)
+  const shouldStickToBottomRef = useRef(true)
   const messageRefs = useRef(new Map<string, HTMLDivElement>())
   const [showHearts, setShowHearts] = useState(false)
+  const [showJumpToLatest, setShowJumpToLatest] = useState(false)
   const [replyingTo, setReplyingTo] = useState<{
     id: string
     senderName: string
@@ -45,8 +48,16 @@ export function ChatPage() {
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null)
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, typingUserId])
+    const container = messagesScrollRef.current
+    if (!container || loading) {
+      return
+    }
+
+    if (shouldStickToBottomRef.current) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      setShowJumpToLatest(false)
+    }
+  }, [messages, loading])
 
   useEffect(() => {
     if (!highlightedMessageId) {
@@ -72,6 +83,18 @@ export function ChatPage() {
 
   if (!user) {
     return null
+  }
+
+  const updateScrollLock = () => {
+    const container = messagesScrollRef.current
+    if (!container) {
+      return
+    }
+
+    const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight
+    const shouldStick = distanceFromBottom < 96
+    shouldStickToBottomRef.current = shouldStick
+    setShowJumpToLatest(!shouldStick)
   }
 
   const wallpaperStyle =
@@ -101,7 +124,7 @@ export function ChatPage() {
           }
 
   return (
-    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+    <div className="relative flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       {showHearts ? (
         <div className="pointer-events-none absolute inset-0 z-30 overflow-hidden">
           {Array.from({ length: 16 }).map((_, index) => (
@@ -118,26 +141,26 @@ export function ChatPage() {
         </div>
       ) : null}
 
-      <div className="border-b border-[var(--panel-border)] px-4 py-4 sm:px-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="border-b border-[var(--panel-border)] px-4 py-3 sm:px-6 sm:py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
           <div className="flex min-w-0 items-center gap-3">
             <Avatar name={partner?.name ?? 'Seu amor'} src={partner?.avatar} size="lg" />
             <div className="min-w-0">
-              <p className="truncate font-display text-2xl text-[var(--text-primary)] sm:text-3xl">{partner?.name ?? 'Seu amor'}</p>
-              <div className="mt-1 flex items-center gap-2">
+              <p className="truncate font-display text-xl text-[var(--text-primary)] sm:text-3xl">{partner?.name ?? 'Seu amor'}</p>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
                 <StatusPill
                   online={partner ? onlineIds.has(partner.id) : false}
                   label={typingUserId === partner?.id ? 'digitando...' : partner && onlineIds.has(partner.id) ? 'online' : 'offline'}
                 />
                 {partner && partnerPresence ? (
-                  <span className="text-xs text-[var(--text-muted)]">
+                  <span className="hidden text-xs text-[var(--text-muted)] sm:inline">
                     {partnerPresence.online ? 'online agora' : `visto ${fromNow(partnerPresence.lastSeen ?? new Date().toISOString())}`}
                   </span>
                 ) : null}
               </div>
             </div>
           </div>
-          <div className="hidden items-center gap-2 sm:flex">
+          <div className="hidden items-center gap-2 md:flex">
             <div className="rounded-2xl bg-[var(--surface-muted)] px-4 py-3 text-sm text-[var(--text-secondary)]">
               <span className="mr-2 inline-flex h-2 w-2 rounded-full bg-[var(--accent)]" />
               espaco seguro para dois
@@ -146,7 +169,12 @@ export function ChatPage() {
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 py-5 sm:px-6" style={wallpaperStyle}>
+      <div
+        ref={messagesScrollRef}
+        onScroll={updateScrollLock}
+        className="relative min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-4 sm:px-6 sm:py-5"
+        style={wallpaperStyle}
+      >
         {loading ? (
           <div className="grid gap-4">
             {Array.from({ length: 5 }).map((_, index) => (
@@ -257,6 +285,20 @@ export function ChatPage() {
             icon={<MessageCircleHeart className="h-8 w-8 text-[var(--accent)]" />}
           />
         )}
+
+        {showJumpToLatest ? (
+          <button
+            type="button"
+            onClick={() => {
+              shouldStickToBottomRef.current = true
+              setShowJumpToLatest(false)
+              bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+            }}
+            className="absolute bottom-4 right-4 rounded-full border border-[var(--panel-border)] bg-[var(--panel-bg)] px-4 py-2 text-xs font-semibold text-[var(--text-primary)] shadow-glow backdrop-blur-xl sm:bottom-5 sm:right-5"
+          >
+            Ir para o fim
+          </button>
+        ) : null}
       </div>
 
       <div className="shrink-0 px-4 pb-4 sm:px-6 sm:pb-6">
@@ -278,7 +320,7 @@ export function ChatPage() {
           onSaudade={() => handleSendMessage('Saudade de voce. Volta aqui no chat assim que puder 💌', null, 'saudade')}
         />
 
-        <div className="mt-3 flex flex-col gap-2 px-2 text-xs text-[var(--text-muted)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-3 hidden flex-col gap-2 px-2 text-xs text-[var(--text-muted)] sm:flex sm:flex-row sm:items-center sm:justify-between">
           <span className="inline-flex items-center gap-1">
             <Heart className="h-3.5 w-3.5 text-[var(--accent)]" />
             Mensagens protegidas com criptografia basica.

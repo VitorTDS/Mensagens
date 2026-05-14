@@ -26,17 +26,17 @@ export function AppShell() {
 
   return (
     <div
-      className="min-h-screen overflow-x-hidden px-3 py-3 text-[var(--text-primary)] lg:h-screen lg:min-h-0 lg:overflow-hidden sm:px-5 sm:py-5"
+      className="h-[100dvh] overflow-hidden px-3 py-3 text-[var(--text-primary)] sm:px-5 sm:py-5"
       style={{ background: 'var(--app-bg)' }}
     >
-      <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] max-w-7xl flex-col gap-4 lg:h-[calc(100vh-2.5rem)] lg:min-h-0 lg:flex-row">
+      <div className="mx-auto flex h-full max-w-7xl flex-col gap-3 lg:flex-row lg:gap-4">
         <div className="hidden w-[320px] shrink-0 lg:block">
           <Sidebar currentUser={user} partner={partner} online={partnerOnline} onLogout={signOut} />
         </div>
 
         {mobileOpen ? (
-          <div className="fixed inset-0 z-50 bg-black/60 p-4 lg:hidden">
-            <div className="h-full max-w-xs">
+          <div className="fixed inset-0 z-50 bg-black/60 p-3 sm:p-4 lg:hidden">
+            <div className="h-full max-w-[92vw] sm:max-w-xs">
               <Sidebar
                 currentUser={user}
                 partner={partner}
@@ -48,8 +48,8 @@ export function AppShell() {
           </div>
         ) : null}
 
-        <main className="flex min-h-[calc(100vh-1.5rem)] min-w-0 flex-1 flex-col rounded-[2rem] border border-[var(--panel-border)] bg-[var(--panel-bg)] shadow-glow backdrop-blur-2xl lg:h-full lg:min-h-0">
-          <header className="flex flex-wrap items-start justify-between gap-3 border-b border-[var(--panel-border)] px-4 py-4 sm:px-6">
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[1.5rem] border border-[var(--panel-border)] bg-[var(--panel-bg)] shadow-glow backdrop-blur-2xl sm:rounded-[2rem]">
+          <header className="flex flex-wrap items-start justify-between gap-2 border-b border-[var(--panel-border)] px-4 py-3 sm:gap-3 sm:px-6 sm:py-4">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
@@ -59,11 +59,11 @@ export function AppShell() {
                 {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
               <div className="min-w-0">
-                <p className="truncate font-display text-2xl text-[var(--text-primary)] sm:text-3xl">{APP_NAME}</p>
-                <p className="text-sm text-[var(--text-muted)]">Um cantinho so de voces dois.</p>
+                <p className="truncate font-display text-xl text-[var(--text-primary)] sm:text-3xl">{APP_NAME}</p>
+                <p className="hidden text-sm text-[var(--text-muted)] sm:block">Um cantinho so de voces dois.</p>
               </div>
             </div>
-            <div className="flex w-full items-center justify-end gap-3 sm:w-auto">
+            <div className="flex w-full items-center justify-end gap-2 sm:w-auto sm:gap-3">
               <InstallPrompt />
               <ThemeToggle />
             </div>
