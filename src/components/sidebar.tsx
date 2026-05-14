@@ -1,4 +1,4 @@
-import { Camera, Heart, Images, LogOut, MessageCircleHeart } from 'lucide-react'
+import { Camera, Heart, Images, LogOut, MessageCircleHeart, X } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSession } from '../hooks/use-session'
@@ -30,8 +30,19 @@ export function Sidebar({ currentUser, partner, online, onLogout, onClose }: Sid
   ]
 
   return (
-    <aside className="flex h-full min-w-0 flex-col overflow-y-auto rounded-[1.75rem] border border-[var(--panel-border)] bg-[var(--panel-bg)] p-4 text-[var(--text-primary)] shadow-glow backdrop-blur-2xl sm:rounded-[2rem] sm:p-5">
-      <div className="flex min-w-0 items-center gap-3">
+    <aside className="relative flex h-full min-w-0 flex-col overflow-y-auto rounded-[1.75rem] border border-[var(--panel-border)] bg-[var(--panel-bg)] p-4 text-[var(--text-primary)] shadow-glow backdrop-blur-2xl sm:rounded-[2rem] sm:p-5">
+      {onClose ? (
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-3 top-3 rounded-full border border-[var(--panel-border)] bg-[var(--panel-bg-strong)] p-2 text-[var(--text-muted)] shadow-soft lg:hidden"
+          aria-label="Fechar painel lateral"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      ) : null}
+
+      <div className="flex min-w-0 items-center gap-3 pr-10">
         <div className="relative">
           <Avatar name={currentUser.name} src={currentUser.avatar} />
           <button
