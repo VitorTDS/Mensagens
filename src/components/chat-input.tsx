@@ -154,7 +154,7 @@ export function ChatInput({
         </div>
       ) : null}
 
-      <div className="flex items-end gap-2 sm:gap-3">
+      <div className="flex items-center gap-2 sm:items-end sm:gap-3">
         <div className="flex shrink-0 gap-2">
           <button
             type="button"
@@ -210,7 +210,7 @@ export function ChatInput({
               }
             }}
             placeholder="Escreva algo bonito..."
-            className="max-h-32 min-h-[50px] w-full resize-none rounded-[1.25rem] border-[var(--panel-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:ring-0 sm:min-h-[54px] sm:rounded-[1.6rem]"
+            className="h-[50px] max-h-[50px] w-full resize-none overflow-y-auto rounded-[1.25rem] border-[var(--panel-border)] bg-[var(--input-bg)] px-4 py-3 text-sm leading-5 text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:ring-0 sm:h-[54px] sm:max-h-[54px] sm:rounded-[1.6rem]"
           />
         </div>
 
