@@ -45,7 +45,9 @@ export default defineConfig({
         theme_color: '#120d18',
         background_color: '#120d18',
         display: 'standalone',
-        start_url: '/',
+        id: './',
+        scope: './',
+        start_url: './',
         icons: [
           {
             src: 'favicon.svg',
