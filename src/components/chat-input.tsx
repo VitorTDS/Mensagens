@@ -73,9 +73,9 @@ export function ChatInput({
   }, [files])
 
   return (
-    <div className="sticky bottom-0 z-10 mt-6 min-w-0 rounded-[2rem] border border-[var(--panel-border)] bg-[var(--composer-bg)] p-3 shadow-glow backdrop-blur-2xl">
+    <div className="relative z-10 mt-4 min-w-0 rounded-[1.5rem] border border-[var(--panel-border)] bg-[var(--composer-bg)] p-3 shadow-glow backdrop-blur-2xl sm:mt-6 sm:rounded-[2rem]">
       {replyTo ? (
-        <div className="mb-3 flex items-start justify-between gap-3 rounded-[1.5rem] border border-[var(--panel-border)] bg-[var(--surface-muted)] px-4 py-3">
+        <div className="mb-3 flex items-start justify-between gap-3 rounded-[1.25rem] border border-[var(--panel-border)] bg-[var(--surface-muted)] px-3 py-3 sm:rounded-[1.5rem] sm:px-4">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">
               Respondendo para {replyTo.senderName}
@@ -104,7 +104,7 @@ export function ChatInput({
               const thumbnail = videoThumbnails[file.name + file.size]
 
               return (
-                <div key={`${file.name}-${file.size}-${index}`} className="flex min-w-0 items-start justify-between gap-3 rounded-[1.5rem] bg-[var(--surface-muted)] p-3">
+                <div key={`${file.name}-${file.size}-${index}`} className="flex min-w-0 items-start justify-between gap-3 rounded-[1.25rem] bg-[var(--surface-muted)] p-3 sm:rounded-[1.5rem]">
                   <div className="flex min-w-0 items-center gap-3">
                     {isVideo ? (
                       <div className="relative">
@@ -154,28 +154,28 @@ export function ChatInput({
         </div>
       ) : null}
 
-      <div className="flex items-end gap-3">
+      <div className="flex items-end gap-2 sm:gap-3">
         <div className="flex shrink-0 gap-2">
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="rounded-2xl bg-[var(--surface-muted)] p-3 text-[var(--text-muted)] transition hover:opacity-90"
+            className="rounded-2xl bg-[var(--surface-muted)] p-2.5 text-[var(--text-muted)] transition hover:opacity-90 sm:p-3"
             aria-label="Enviar foto ou video"
           >
-            {files.some((file) => file.type.startsWith('video/')) ? <Video className="h-5 w-5" /> : <ImagePlus className="h-5 w-5" />}
+            {files.some((file) => file.type.startsWith('video/')) ? <Video className="h-4 w-4 sm:h-5 sm:w-5" /> : <ImagePlus className="h-4 w-4 sm:h-5 sm:w-5" />}
           </button>
           <button
             type="button"
             onClick={() => setShowEmoji((current) => !current)}
-            className="rounded-2xl bg-[var(--surface-muted)] p-3 text-[var(--text-muted)] transition hover:opacity-90"
+            className="rounded-2xl bg-[var(--surface-muted)] p-2.5 text-[var(--text-muted)] transition hover:opacity-90 sm:p-3"
           >
-            <Smile className="h-5 w-5" />
+            <Smile className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
         </div>
 
         <div className="relative min-w-0 flex-1">
           {showEmoji ? (
-            <div className="absolute bottom-[calc(100%+12px)] left-0 z-20">
+            <div className="absolute bottom-[calc(100%+12px)] left-0 z-20 max-w-[calc(100vw-5rem)] sm:max-w-none">
               <Suspense fallback={<div className="rounded-3xl bg-[var(--panel-bg-strong)] px-6 py-10 text-sm text-[var(--text-muted)]">Carregando emojis...</div>}>
                 <EmojiPicker
                   width={320}
@@ -210,7 +210,7 @@ export function ChatInput({
               }
             }}
             placeholder="Escreva algo bonito..."
-            className="max-h-32 min-h-[54px] w-full resize-none rounded-[1.6rem] border-[var(--panel-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:ring-0"
+            className="max-h-32 min-h-[50px] w-full resize-none rounded-[1.25rem] border-[var(--panel-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:ring-0 sm:min-h-[54px] sm:rounded-[1.6rem]"
           />
         </div>
 
@@ -231,9 +231,9 @@ export function ChatInput({
             })
           }
           disabled={disabled || (!message.trim() && !files.length)}
-          className="h-[54px] w-[54px] rounded-2xl p-0"
+          className="h-[48px] w-[48px] rounded-2xl p-0 sm:h-[54px] sm:w-[54px]"
         >
-          <SendHorizonal className="h-5 w-5" />
+          <SendHorizonal className="h-4 w-4 sm:h-5 sm:w-5" />
         </Button>
       </div>
 
