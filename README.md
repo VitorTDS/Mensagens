@@ -42,8 +42,6 @@ supabase/
 - Upload de imagens
 - Bucket privado com URLs assinadas
 - Favoritos
-- Botao saudade
-- Coracao animado
 - Contador de dias juntos
 - Tela de lembrancas
 - Tema claro/escuro

@@ -17,8 +17,6 @@ interface ChatInputProps {
   onCancelReply?: () => void
   onSubmit: (content: string, files?: File[] | null) => Promise<void>
   onTyping: (active: boolean) => Promise<void>
-  onHeart: () => Promise<void>
-  onSaudade: () => Promise<void>
 }
 
 export function ChatInput({
@@ -28,8 +26,6 @@ export function ChatInput({
   onCancelReply,
   onSubmit,
   onTyping,
-  onHeart,
-  onSaudade,
 }: ChatInputProps) {
   const [message, setMessage] = useState('')
   const [showEmoji, setShowEmoji] = useState(false)
@@ -214,14 +210,6 @@ export function ChatInput({
           />
         </div>
 
-        <div className="hidden gap-2 sm:flex">
-          <Button variant="secondary" onClick={() => void onSaudade()}>
-            Saudade
-          </Button>
-          <Button variant="secondary" onClick={() => void onHeart()}>
-            💖
-          </Button>
-        </div>
         <Button
           onClick={() =>
             void onSubmit(message, files).then(() => {
@@ -234,15 +222,6 @@ export function ChatInput({
           className="h-[48px] w-[48px] rounded-2xl p-0 sm:h-[54px] sm:w-[54px]"
         >
           <SendHorizonal className="h-4 w-4 sm:h-5 sm:w-5" />
-        </Button>
-      </div>
-
-      <div className="mt-3 flex gap-2 sm:hidden">
-        <Button variant="secondary" onClick={() => void onSaudade()} className="flex-1">
-          Saudade
-        </Button>
-        <Button variant="secondary" onClick={() => void onHeart()} className="flex-1">
-          Coracao
         </Button>
       </div>
 

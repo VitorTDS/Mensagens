@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Button } from './ui/button'
-import { cropImageToDataUrl } from '../lib/image'
+import { cropImageToDataUrl, getCropRect } from '../lib/image'
 
 interface AvatarEditorDialogProps {
   source: string | null
@@ -21,6 +21,7 @@ export function AvatarEditorDialog({
   const [offsetX, setOffsetX] = useState(0)
   const [offsetY, setOffsetY] = useState(0)
   const [saving, setSaving] = useState(false)
+  const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null)
 
   useEffect(() => {
     if (open) {
@@ -30,17 +31,20 @@ export function AvatarEditorDialog({
     }
   }, [open, source])
 
-  const previewStyle = useMemo(
-    () =>
-      source
-        ? {
-            backgroundImage: `url(${source})`,
-            backgroundPosition: `calc(50% + ${offsetX}px) calc(50% + ${offsetY}px)`,
-            backgroundSize: `${scale * 100}%`,
-          }
-        : undefined,
-    [offsetX, offsetY, scale, source],
-  )
+  // Usa a mesma conta do recorte final, em porcentagem do circulo de previa.
+  const previewStyle = useMemo(() => {
+    if (!imageSize) {
+      return { visibility: 'hidden' as const }
+    }
+
+    const rect = getCropRect(imageSize.width, imageSize.height, 100, { scale, offsetX, offsetY })
+    return {
+      left: `${rect.x}%`,
+      top: `${rect.y}%`,
+      width: `${rect.width}%`,
+      height: `${rect.height}%`,
+    }
+  }, [imageSize, offsetX, offsetY, scale])
 
   if (!open || !source) {
     return null
@@ -53,8 +57,20 @@ export function AvatarEditorDialog({
         <p className="mt-2 text-sm text-[var(--text-muted)]">Centralize o rosto e salve a versao final.</p>
 
         <div className="mt-5 flex justify-center">
-          <div className="h-44 w-44 overflow-hidden rounded-full border-4 border-[var(--panel-border)] bg-[var(--surface-muted)] sm:h-56 sm:w-56">
-            <div className="h-full w-full bg-center bg-no-repeat" style={previewStyle} />
+          <div className="relative h-44 w-44 overflow-hidden rounded-full border-4 border-[var(--panel-border)] bg-[var(--surface-muted)] sm:h-56 sm:w-56">
+            <img
+              src={source}
+              alt="Previa da foto"
+              draggable={false}
+              onLoad={(event) =>
+                setImageSize({
+                  width: event.currentTarget.naturalWidth,
+                  height: event.currentTarget.naturalHeight,
+                })
+              }
+              className="absolute max-w-none select-none"
+              style={previewStyle}
+            />
           </div>
         </div>
 
@@ -75,8 +91,8 @@ export function AvatarEditorDialog({
             Horizontal
             <input
               type="range"
-              min="-120"
-              max="120"
+              min="-100"
+              max="100"
               step="1"
               value={offsetX}
               onChange={(event) => setOffsetX(Number(event.target.value))}
@@ -87,8 +103,8 @@ export function AvatarEditorDialog({
             Vertical
             <input
               type="range"
-              min="-120"
-              max="120"
+              min="-100"
+              max="100"
               step="1"
               value={offsetY}
               onChange={(event) => setOffsetY(Number(event.target.value))}

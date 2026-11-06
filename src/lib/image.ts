@@ -42,9 +42,36 @@ export async function compressImageToDataUrl(
   })
 }
 
+export interface CropAdjustment {
+  scale: number
+  offsetX: number
+  offsetY: number
+}
+
+// Posicao da imagem dentro de um quadrado de lado `size`. A imagem sempre cobre
+// o quadrado e comeca centralizada. Os offsets vao de -100 a 100 e representam
+// a parte da sobra usada, entao o mesmo ajuste vale para qualquer tamanho.
+export function getCropRect(
+  imageWidth: number,
+  imageHeight: number,
+  size: number,
+  { scale, offsetX, offsetY }: CropAdjustment,
+) {
+  const ratio = (size / Math.min(imageWidth, imageHeight)) * scale
+  const width = imageWidth * ratio
+  const height = imageHeight * ratio
+
+  return {
+    x: ((size - width) / 2) * (1 - offsetX / 100),
+    y: ((size - height) / 2) * (1 - offsetY / 100),
+    width,
+    height,
+  }
+}
+
 export async function cropImageToDataUrl(
   source: string,
-  options: { size: number; scale: number; offsetX: number; offsetY: number; quality?: number },
+  options: CropAdjustment & { size: number; quality?: number },
 ) {
   return new Promise<string>((resolve, reject) => {
     const image = new Image()
@@ -58,12 +85,8 @@ export async function cropImageToDataUrl(
         return
       }
 
-      context.clearRect(0, 0, options.size, options.size)
-      const scaledWidth = image.width * options.scale
-      const scaledHeight = image.height * options.scale
-      const x = (options.size - scaledWidth) / 2 + options.offsetX
-      const y = (options.size - scaledHeight) / 2 + options.offsetY
-      context.drawImage(image, x, y, scaledWidth, scaledHeight)
+      const { x, y, width, height } = getCropRect(image.width, image.height, options.size, options)
+      context.drawImage(image, x, y, width, height)
       resolve(canvas.toDataURL('image/jpeg', options.quality ?? 0.88))
     }
     image.onerror = () => reject(new Error('Nao foi possivel carregar a imagem.'))

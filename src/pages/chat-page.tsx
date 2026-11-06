@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Heart, MessageCircleHeart, Pencil, Sparkles, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ChatInput } from '../components/chat-input'
@@ -35,7 +34,6 @@ export function ChatPage() {
   const messagesScrollRef = useRef<HTMLDivElement | null>(null)
   const shouldStickToBottomRef = useRef(true)
   const messageRefs = useRef(new Map<string, HTMLDivElement>())
-  const [showHearts, setShowHearts] = useState(false)
   const [showJumpToLatest, setShowJumpToLatest] = useState(false)
   const [replyingTo, setReplyingTo] = useState<{
     id: string
@@ -129,22 +127,6 @@ export function ChatPage() {
 
   return (
     <div className="relative flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-      {showHearts ? (
-        <div className="pointer-events-none absolute inset-0 z-30 overflow-hidden">
-          {Array.from({ length: 16 }).map((_, index) => (
-            <motion.div
-              key={index}
-              initial={{ y: '100%', opacity: 0, x: `${index * 6}%` }}
-              animate={{ y: '-20%', opacity: [0, 1, 0], x: `${index * 6 + 10}%` }}
-              transition={{ duration: 2.2, ease: 'easeOut', delay: index * 0.05 }}
-              className="absolute bottom-0 text-2xl"
-            >
-              💖
-            </motion.div>
-          ))}
-        </div>
-      ) : null}
-
       <div className="border-b border-[var(--panel-border)] px-4 py-3 sm:px-6 sm:py-4">
         <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
           <div className="flex min-w-0 items-center gap-3">
@@ -328,12 +310,6 @@ export function ChatPage() {
             await handleSendMessage(content, files, 'text', replyingTo?.id ?? null)
             setReplyingTo(null)
           }}
-          onHeart={async () => {
-            await handleSendMessage('Te mandei um coracao porque pensei em voce agora.', null, 'heart')
-            setShowHearts(true)
-            window.setTimeout(() => setShowHearts(false), 2200)
-          }}
-          onSaudade={() => handleSendMessage('Saudade de voce. Volta aqui no chat assim que puder 💌', null, 'saudade')}
         />
 
         <div className="mt-3 hidden flex-col gap-2 px-2 text-xs text-[var(--text-muted)] sm:flex sm:flex-row sm:items-center sm:justify-between">
