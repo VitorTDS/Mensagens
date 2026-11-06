@@ -32,6 +32,7 @@ supabase/
 ## Funcionalidades entregues
 
 - Entrada por codigo numerico
+- Trava com Face ID ou biometria ao abrir o app, ativada em cada celular
 - Persistencia de sessao
 - Rotas protegidas
 - Chat em tempo real com fallback mock
@@ -115,6 +116,7 @@ Em desenvolvimento, qualquer codigo com pelo menos 4 numeros entra. Codigos dife
 
 ## Observacoes de seguranca
 
+- A trava com biometria e local: protege contra quem pega o celular desbloqueado, mas nao substitui o codigo nem valida nada no servidor. Ela exige HTTPS ou localhost.
 - O projeto usa criptografia basica no cliente para preparar a evolucao para ponta a ponta.
 - Para E2EE real, adicione troca de chaves por usuario e gerenciamento seguro de dispositivos.
 - O acesso fica restrito aos emails definidos em `VITE_MOONCHAT_ALLOWED_EMAILS` / `NEXT_PUBLIC_MOONCHAT_ALLOWED_EMAILS`.

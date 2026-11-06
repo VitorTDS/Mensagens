@@ -1,5 +1,6 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'sonner'
+import { AppLock } from './components/app-lock'
 import { AppShell } from './layouts/app-shell'
 import { ProtectedRoute } from './components/protected-route'
 import { LoadingScreen } from './components/ui/loading-screen'
@@ -24,9 +25,15 @@ function ShellRoutes() {
       <Route
         element={
           <ProtectedRoute>
-            <ChatProvider>
-              <AppShell />
-            </ChatProvider>
+            {user ? (
+              <AppLock key={user.id} user={user}>
+                <ChatProvider>
+                  <AppShell />
+                </ChatProvider>
+              </AppLock>
+            ) : (
+              <LoadingScreen />
+            )}
           </ProtectedRoute>
         }
       >
