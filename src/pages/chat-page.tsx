@@ -4,6 +4,7 @@ import { ChatInput } from '../components/chat-input'
 import { MessageBubble } from '../components/message-bubble'
 import { NicknameDialog } from '../components/nickname-dialog'
 import { StatusPill } from '../components/status-pill'
+import { ZoomableImage } from '../components/zoomable-image'
 import { Avatar } from '../components/ui/avatar'
 import { EmptyState } from '../components/ui/empty-state'
 import { useChatContext } from '../hooks/use-chat-context'
@@ -30,7 +31,6 @@ export function ChatPage() {
     nickname,
     handleSaveNickname,
   } = useChatContext()
-  const bottomRef = useRef<HTMLDivElement | null>(null)
   const messagesScrollRef = useRef<HTMLDivElement | null>(null)
   const shouldStickToBottomRef = useRef(true)
   const messageRefs = useRef(new Map<string, HTMLDivElement>())
@@ -56,10 +56,28 @@ export function ChatPage() {
     }
 
     if (shouldStickToBottomRef.current) {
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      container.scrollTop = container.scrollHeight
       setShowJumpToLatest(false)
     }
   }, [messages, loading])
+
+  // Mensagens e fotos terminam de crescer depois de aparecer na tela.
+  const hasMessages = messages.length > 0
+  useEffect(() => {
+    const container = messagesScrollRef.current
+    const content = container?.firstElementChild
+    if (!container || !content) {
+      return
+    }
+
+    const observer = new ResizeObserver(() => {
+      if (shouldStickToBottomRef.current) {
+        container.scrollTop = container.scrollHeight
+      }
+    })
+    observer.observe(content)
+    return () => observer.disconnect()
+  }, [hasMessages, loading])
 
   useEffect(() => {
     if (!highlightedMessageId) {
@@ -274,7 +292,6 @@ export function ChatPage() {
                 {partner?.name ?? 'Seu amor'} esta digitando...
               </div>
             ) : null}
-            <div ref={bottomRef} />
           </div>
         ) : (
           <EmptyState
@@ -290,7 +307,8 @@ export function ChatPage() {
             onClick={() => {
               shouldStickToBottomRef.current = true
               setShowJumpToLatest(false)
-              bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+              const container = messagesScrollRef.current
+              container?.scrollTo({ top: container.scrollHeight, behavior: 'smooth' })
             }}
             className="absolute bottom-4 right-4 rounded-full border border-[var(--panel-border)] bg-[var(--panel-bg)] px-4 py-2 text-xs font-semibold text-[var(--text-primary)] shadow-glow backdrop-blur-xl sm:bottom-5 sm:right-5"
           >
@@ -307,6 +325,7 @@ export function ChatPage() {
           onCancelReply={() => setReplyingTo(null)}
           onTyping={handleTyping}
           onSubmit={async (content, files) => {
+            shouldStickToBottomRef.current = true
             await handleSendMessage(content, files, 'text', replyingTo?.id ?? null)
             setReplyingTo(null)
           }}
@@ -340,11 +359,7 @@ export function ChatPage() {
                 className="max-h-[78vh] w-full rounded-[2rem] bg-black object-contain"
               />
             ) : (
-              <img
-                src={activeMedia.url}
-                alt={activeMedia.name ?? 'Midia ampliada'}
-                className="max-h-[78vh] w-full rounded-[2rem] object-contain"
-              />
+              <ZoomableImage src={activeMedia.url} alt={activeMedia.name ?? 'Midia ampliada'} />
             )}
             {activeMedia.name ? <p className="text-sm text-white/80">{activeMedia.name}</p> : null}
           </div>

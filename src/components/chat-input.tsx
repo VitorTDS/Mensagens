@@ -206,7 +206,7 @@ export function ChatInput({
               }
             }}
             placeholder="Escreva algo bonito..."
-            className="h-[50px] max-h-[50px] w-full resize-none overflow-y-auto rounded-[1.25rem] border-[var(--panel-border)] bg-[var(--input-bg)] px-4 py-3 text-sm leading-5 text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:ring-0 sm:h-[54px] sm:max-h-[54px] sm:rounded-[1.6rem]"
+            className="h-[50px] max-h-[50px] w-full resize-none overflow-y-auto rounded-[1.25rem] border-[var(--panel-border)] bg-[var(--input-bg)] px-4 py-3 text-base leading-5 text-[var(--text-primary)] lg:text-sm placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:ring-0 sm:h-[54px] sm:max-h-[54px] sm:rounded-[1.6rem]"
           />
         </div>
 

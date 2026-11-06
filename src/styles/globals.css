@@ -104,6 +104,11 @@ body,
   width: 100%;
 }
 
+html {
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   background: #0b0910;
