@@ -8,14 +8,6 @@ import { STORAGE_BUCKET } from '../lib/constants'
 const MOCK_SESSION_KEY = 'moonchat:mock-session'
 const isProduction = import.meta.env.PROD
 
-function isAllowed(email: string) {
-  if (!ALLOWED_EMAILS.length) {
-    return true
-  }
-
-  return ALLOWED_EMAILS.includes(email.toLowerCase())
-}
-
 function nameFromEmail(email: string) {
   const prefix = email.split('@')[0] ?? 'Moon'
   return prefix
@@ -82,34 +74,50 @@ export async function getCurrentAuthUser(): Promise<AuthUser | null> {
   return (await localforage.getItem<AuthUser | null>(MOCK_SESSION_KEY)) ?? null
 }
 
-export async function signIn(email: string, password: string) {
-  if (!isAllowed(email)) {
-    throw new Error('Este email não está autorizado para acessar o MoonChat.')
-  }
-
+// O codigo numerico e a senha da conta no Supabase. A tela nao pede email,
+// entao o codigo e testado em cada email autorizado para descobrir quem entrou.
+export async function signIn(code: string) {
   if (isSupabaseConfigured && supabase) {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      throw error
+    if (!ALLOWED_EMAILS.length) {
+      throw new Error('Defina VITE_MOONCHAT_ALLOWED_EMAILS para liberar a entrada por codigo.')
     }
 
-    const user = await getCurrentAuthUser()
-    if (!user) {
-      throw new Error('Não foi possível iniciar a sessão.')
+    for (const email of ALLOWED_EMAILS) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password: code })
+
+      if (error?.code === 'invalid_credentials') {
+        continue
+      }
+
+      if (error?.status === 429) {
+        throw new Error('Muitas tentativas. Aguarde um pouco e tente de novo.')
+      }
+
+      if (error) {
+        throw error
+      }
+
+      const user = await getCurrentAuthUser()
+      if (!user) {
+        throw new Error('Não foi possível iniciar a sessão.')
+      }
+
+      await ensureUserProfile(user)
+      return user
     }
 
-    await ensureUserProfile(user)
-    return user
+    throw new Error('Código incorreto.')
   }
 
   if (isProduction) {
     throw new Error('Este ambiente de producao exige configuracao do Supabase.')
   }
 
-  if (password.length < 4) {
-    throw new Error('No modo mock, use uma senha com pelo menos 4 caracteres.')
+  if (code.length < 4) {
+    throw new Error('No modo mock, use um código com pelo menos 4 números.')
   }
 
+  const email = `pessoa-${code}@cantinho.local`
   const user: AuthUser = {
     id: `mock-${email.toLowerCase().replace(/[^a-z0-9]+/g, '-') || crypto.randomUUID()}`,
     email,

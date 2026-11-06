@@ -31,7 +31,7 @@ supabase/
 
 ## Funcionalidades entregues
 
-- Login com email e senha
+- Entrada por codigo numerico
 - Persistencia de sessao
 - Rotas protegidas
 - Chat em tempo real com fallback mock
@@ -77,19 +77,17 @@ npm run build
 1. Crie um projeto no Supabase.
 2. Em `SQL Editor`, execute o arquivo [schema.sql](./supabase/schema.sql).
 3. Ative `Email` em `Authentication > Providers`.
-4. Crie os dois usuarios autorizados em `Authentication > Users`.
+4. Crie os dois usuarios autorizados em `Authentication > Users`. A senha de cada um e o codigo numerico usado na tela de entrada: precisa ter so numeros, pelo menos 6 digitos e ser diferente entre os dois.
 5. Copie `Project URL` e `anon public key` para o `.env`.
-6. Crie o bucket `moonchat-media` caso prefira manualmente.
-7. Defina `VITE_MESSAGE_SECRET` com um valor proprio em producao.
+6. Defina `VITE_MOONCHAT_ALLOWED_EMAILS` com os dois emails. O codigo e testado neles para identificar quem entrou.
+7. Crie o bucket `moonchat-media` caso prefira manualmente.
+8. Defina `VITE_MESSAGE_SECRET` com um valor proprio em producao.
 
 ## Modo mock
 
 Se `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` nao forem definidos, o app roda em modo mock com dados locais.
 
-Credenciais de desenvolvimento:
-
-- use qualquer email permitido no `.env`
-- defina uma senha local para testes apenas em ambiente de desenvolvimento
+Em desenvolvimento, qualquer codigo com pelo menos 4 numeros entra. Codigos diferentes viram pessoas diferentes.
 
 ## Deploy
 

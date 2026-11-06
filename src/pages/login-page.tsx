@@ -1,28 +1,27 @@
 import { motion } from 'framer-motion'
-import { LockKeyhole, MessageCircleHeart } from 'lucide-react'
-import { useState } from 'react'
+import { MessageCircleHeart } from 'lucide-react'
+import { type FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Button } from '../components/ui/button'
 import { APP_NAME } from '../lib/constants'
 import { useSession } from '../hooks/use-session'
-import { isSupabaseConfigured } from '../services/supabase'
 
 export function LoginPage() {
   const navigate = useNavigate()
   const { signIn } = useSession()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleLogin = async () => {
+  const handleLogin = async (event: FormEvent) => {
+    event.preventDefault()
     setLoading(true)
     try {
-      await signIn(email, password)
+      await signIn(code)
       navigate('/')
-      toast.success('Sessao iniciada.')
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Falha no login.')
+      setCode('')
+      toast.error(error instanceof Error ? error.message : 'Falha ao entrar.')
     } finally {
       setLoading(false)
     }
@@ -41,41 +40,26 @@ export function LoginPage() {
           </div>
           <div className="min-w-0">
             <p className="truncate font-display text-3xl text-[var(--text-primary)] sm:text-4xl">{APP_NAME}</p>
-            <p className="text-sm text-[var(--text-muted)]">Entrar no nosso cantinho.</p>
+            <p className="text-sm text-[var(--text-muted)]">Digite seu código para entrar.</p>
           </div>
         </div>
 
-        <div className="mb-5 rounded-[1.4rem] border border-[var(--panel-border)] bg-[var(--surface-muted)] p-4 text-sm text-[var(--text-secondary)]">
-          <div className="mb-2 flex items-center gap-2">
-            <LockKeyhole className="h-4 w-4 text-[var(--accent)]" />
-            <span className="font-medium text-[var(--text-primary)]">Acesso do cantinho</span>
-          </div>
-          <p>
-            {isSupabaseConfigured
-              ? 'Use sua conta cadastrada no Supabase.'
-              : 'Modo local apenas para desenvolvimento. Configure o Supabase para publicar com seguranca.'}
-          </p>
-        </div>
-
-        <div className="space-y-4">
+        <form onSubmit={(event) => void handleLogin(event)} className="space-y-4">
           <input
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            type="email"
-            placeholder="Email"
-            className="w-full rounded-[1.4rem] border-[var(--panel-border)] bg-[var(--input-bg)] px-4 py-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:ring-0"
-          />
-          <input
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            value={code}
+            onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
             type="password"
-            placeholder="Senha"
-            className="w-full rounded-[1.4rem] border-[var(--panel-border)] bg-[var(--input-bg)] px-4 py-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:ring-0"
+            inputMode="numeric"
+            autoComplete="off"
+            autoFocus
+            aria-label="Código"
+            placeholder="Código"
+            className="w-full rounded-[1.4rem] border-[var(--panel-border)] bg-[var(--input-bg)] px-4 py-4 text-center text-2xl tracking-[0.3em] text-[var(--text-primary)] placeholder:tracking-normal placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:ring-0"
           />
-          <Button onClick={() => void handleLogin()} disabled={loading} className="h-14 w-full text-base">
+          <Button type="submit" disabled={loading || !code} className="h-14 w-full text-base">
             {loading ? 'Entrando...' : `Abrir ${APP_NAME}`}
           </Button>
-        </div>
+        </form>
       </motion.section>
     </div>
   )
