@@ -4,8 +4,10 @@ import { APP_NAME } from '../lib/constants'
 import { playMessageSound } from '../lib/sound'
 import {
   getMessages,
+  getPartnerNickname,
   getProfiles,
   markMessagesAsRead,
+  savePartnerNickname,
   sendMessage,
   sendTypingSignal,
   subscribeToMessages,
@@ -36,9 +38,12 @@ function getErrorDetail(error: unknown) {
   return 'erro desconhecido'
 }
 
+const PROFILE_REFRESH_MS = 5 * 60 * 1000
+
 export function useChat(user: AuthUser | null) {
   const [messages, setMessages] = useState<MessageRecord[]>([])
-  const [profiles, setProfiles] = useState<UserProfile[]>([])
+  const [storedProfiles, setStoredProfiles] = useState<UserProfile[]>([])
+  const [nickname, setNickname] = useState<string | null>(null)
   const [typingUserId, setTypingUserId] = useState<string | null>(null)
   const [presence, setPresence] = useState<PresenceState[]>([])
   const [loading, setLoading] = useState(true)
@@ -47,6 +52,13 @@ export function useChat(user: AuthUser | null) {
   const lastIncomingRef = useRef<string | null>(null)
   const typingTimeout = useRef<number | null>(null)
 
+  const profiles = useMemo(
+    () =>
+      storedProfiles.map((profile) =>
+        nickname && profile.id !== user?.id ? { ...profile, name: nickname } : profile,
+      ),
+    [nickname, storedProfiles, user?.id],
+  )
   const partner = useMemo(
     () => profiles.find((profile) => profile.id !== user?.id) ?? profiles[0] ?? null,
     [profiles, user?.id],
@@ -64,17 +76,45 @@ export function useChat(user: AuthUser | null) {
     let mounted = true
 
     const load = async () => {
-      const [nextMessages, nextProfiles] = await Promise.all([getMessages(), getProfiles()])
+      const [nextMessages, nextProfiles, nextNickname] = await Promise.all([
+        getMessages(),
+        getProfiles(),
+        getPartnerNickname(user.id),
+      ])
       if (!mounted) {
         return
       }
 
       setMessages(nextMessages)
-      setProfiles(nextProfiles)
+      setStoredProfiles(nextProfiles)
+      setNickname(nextNickname)
       setLoading(false)
     }
 
     void load()
+
+    // Traz a foto nova do outro e renova os links das fotos, que expiram em 1 hora.
+    const syncProfiles = () => {
+      void Promise.all([getProfiles(), getPartnerNickname(user.id)])
+        .then(([nextProfiles, nextNickname]) => {
+          if (!mounted) {
+            return
+          }
+
+          setStoredProfiles(nextProfiles)
+          setNickname(nextNickname)
+        })
+        .catch(() => undefined)
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        syncProfiles()
+      }
+    }
+
+    const profileInterval = window.setInterval(syncProfiles, PROFILE_REFRESH_MS)
+    document.addEventListener('visibilitychange', handleVisibility)
 
     const unsubscribeMessages = subscribeToMessages(() => {
       void getMessages().then((next) => {
@@ -123,6 +163,8 @@ export function useChat(user: AuthUser | null) {
     return () => {
       mounted = false
       window.clearInterval(pollingInterval)
+      window.clearInterval(profileInterval)
+      document.removeEventListener('visibilitychange', handleVisibility)
       unsubscribeMessages()
       unsubscribeTyping()
       unsubscribePresence()
@@ -230,12 +272,23 @@ export function useChat(user: AuthUser | null) {
     }
   }
 
+  const handleSaveNickname = async (value: string) => {
+    if (!user) {
+      return
+    }
+
+    const next = value.trim()
+    await savePartnerNickname(user.id, next)
+    setNickname(next || null)
+  }
+
   const onlineIds = new Set(presence.filter((entry) => entry.online).map((entry) => entry.userId))
 
   return {
     messages,
     profiles,
     partner,
+    nickname,
     loading,
     sending,
     uploadProgress,
@@ -245,5 +298,6 @@ export function useChat(user: AuthUser | null) {
     handleSendMessage,
     handleTyping,
     handleToggleFavorite,
+    handleSaveNickname,
   }
 }

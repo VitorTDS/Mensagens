@@ -167,11 +167,16 @@ export async function ensureUserProfile(user: AuthUser) {
     return
   }
 
+  // user.avatar pode ser um link assinado, que expira. O banco guarda o caminho.
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
   const profile: UserProfile = {
     id: user.id,
     email: user.email,
     name: user.name,
-    avatar: user.avatar,
+    avatar: session?.user.user_metadata.avatar_url ?? user.avatar,
     created_at: new Date().toISOString(),
   }
 
@@ -181,17 +186,30 @@ export async function ensureUserProfile(user: AuthUser) {
   }
 }
 
+// A CSP do site bloqueia fetch em data: URLs, entao a imagem e convertida aqui.
+function dataUrlToBlob(dataUrl: string) {
+  const [header, body] = dataUrl.split(',')
+  const type = header.match(/^data:([^;]+)/)?.[1] ?? 'image/jpeg'
+  const bytes = Uint8Array.from(atob(body), (char) => char.charCodeAt(0))
+  return new Blob([bytes], { type })
+}
+
 export async function updateProfileAvatar(user: AuthUser, avatar: string) {
   if (isSupabaseConfigured && supabase) {
-    const blob = await (await fetch(avatar)).blob()
-    const path = `avatars/${user.id}-${crypto.randomUUID()}.jpg`
-    const { error: uploadError } = await supabase.storage.from(STORAGE_BUCKET).upload(path, blob, {
-      cacheControl: '3600',
-      upsert: false,
-      contentType: 'image/jpeg',
-    })
-    if (uploadError) {
-      throw uploadError
+    let path = avatar
+
+    if (avatar.startsWith('data:')) {
+      path = `avatars/${user.id}-${crypto.randomUUID()}.jpg`
+      const { error: uploadError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .upload(path, dataUrlToBlob(avatar), {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: 'image/jpeg',
+        })
+      if (uploadError) {
+        throw uploadError
+      }
     }
 
     const { error: authError } = await supabase.auth.updateUser({

@@ -140,6 +140,23 @@ create policy "favorites_delete_self"
 on public.favorites for delete
 using (auth.uid() = user_id and public.is_moonchat_member());
 
+create table if not exists public.nicknames (
+  owner_id uuid primary key references public.users(id) on delete cascade,
+  nickname text not null check (char_length(nickname) between 1 and 40),
+  updated_at timestamptz not null default timezone('utc'::text, now())
+);
+
+alter table public.nicknames enable row level security;
+
+drop policy if exists "nicknames_owner_only" on public.nicknames;
+create policy "nicknames_owner_only"
+on public.nicknames for all
+to authenticated
+using (auth.uid() = owner_id)
+with check (auth.uid() = owner_id);
+
+grant select, insert, update, delete on public.nicknames to authenticated;
+
 insert into storage.buckets (id, name, public)
 values ('moonchat-media', 'moonchat-media', false)
 on conflict (id) do update

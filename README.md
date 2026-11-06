@@ -33,6 +33,7 @@ supabase/
 
 - Entrada por codigo numerico
 - Trava com Face ID ou biometria ao abrir o app, ativada em cada celular
+- Apelido para a outra pessoa, visivel so para quem escolheu
 - Persistencia de sessao
 - Rotas protegidas
 - Chat em tempo real com fallback mock

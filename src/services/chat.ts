@@ -9,6 +9,7 @@ const MESSAGES_KEY = 'moonchat:messages'
 const MEMORIES_KEY = 'moonchat:memories'
 const TYPING_KEY = 'moonchat:typing'
 const PROFILES_KEY = 'moonchat:profiles'
+const NICKNAME_KEY = 'moonchat:nickname'
 const isProduction = import.meta.env.PROD
 let typingChannel: RealtimeChannel | null = null
 
@@ -98,6 +99,13 @@ async function loadMockProfiles() {
   return mockProfiles
 }
 
+// O banco pode ter um link assinado antigo em vez do caminho da foto. Links
+// assinados expiram, entao o caminho e recuperado para gerar um link novo.
+async function resolveAvatar(avatar: string) {
+  const signedPath = avatar.match(/\/object\/sign\/moonchat-media\/([^?]+)/)?.[1]
+  return resolveMediaUrl(signedPath ? decodeURIComponent(signedPath) : avatar)
+}
+
 export async function getProfiles() {
   if (isSupabaseConfigured && supabase) {
     const { data, error } = await supabase.from('users').select('*').order('created_at')
@@ -105,7 +113,12 @@ export async function getProfiles() {
       throw error
     }
 
-    return (data ?? []) as UserProfile[]
+    return Promise.all(
+      ((data ?? []) as UserProfile[]).map(async (profile) => ({
+        ...profile,
+        avatar: profile.avatar ? await resolveAvatar(profile.avatar) : profile.avatar,
+      })),
+    )
   }
 
   if (isProduction) {
@@ -113,6 +126,56 @@ export async function getProfiles() {
   }
 
   return loadMockProfiles()
+}
+
+export async function getPartnerNickname(userId: string) {
+  if (isSupabaseConfigured && supabase) {
+    const { data, error } = await supabase
+      .from('nicknames')
+      .select('nickname')
+      .eq('owner_id', userId)
+      .maybeSingle()
+
+    // Sem o apelido o app segue com o nome normal, entao uma falha aqui nao trava o chat.
+    if (error) {
+      console.warn('Nao foi possivel carregar o apelido.', error.message)
+      return null
+    }
+
+    return (data?.nickname as string | undefined) ?? null
+  }
+
+  if (isProduction) {
+    throw new Error('Supabase nao configurado em producao.')
+  }
+
+  return localforage.getItem<string>(`${NICKNAME_KEY}:${userId}`)
+}
+
+export async function savePartnerNickname(userId: string, nickname: string) {
+  if (isSupabaseConfigured && supabase) {
+    const { error } = nickname
+      ? await supabase
+          .from('nicknames')
+          .upsert({ owner_id: userId, nickname, updated_at: new Date().toISOString() })
+      : await supabase.from('nicknames').delete().eq('owner_id', userId)
+
+    if (error) {
+      throw error
+    }
+
+    return
+  }
+
+  if (isProduction) {
+    throw new Error('Supabase nao configurado em producao.')
+  }
+
+  if (nickname) {
+    await localforage.setItem(`${NICKNAME_KEY}:${userId}`, nickname)
+  } else {
+    await localforage.removeItem(`${NICKNAME_KEY}:${userId}`)
+  }
 }
 
 export async function getMessages() {

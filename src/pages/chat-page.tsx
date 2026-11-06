@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion'
-import { Heart, MessageCircleHeart, Sparkles, X } from 'lucide-react'
+import { Heart, MessageCircleHeart, Pencil, Sparkles, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ChatInput } from '../components/chat-input'
 import { MessageBubble } from '../components/message-bubble'
+import { NicknameDialog } from '../components/nickname-dialog'
 import { StatusPill } from '../components/status-pill'
 import { Avatar } from '../components/ui/avatar'
 import { EmptyState } from '../components/ui/empty-state'
@@ -27,6 +28,8 @@ export function ChatPage() {
     handleSendMessage,
     handleTyping,
     handleToggleFavorite,
+    nickname,
+    handleSaveNickname,
   } = useChatContext()
   const bottomRef = useRef<HTMLDivElement | null>(null)
   const messagesScrollRef = useRef<HTMLDivElement | null>(null)
@@ -46,6 +49,7 @@ export function ChatPage() {
     name?: string | null
   } | null>(null)
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null)
+  const [editingNickname, setEditingNickname] = useState(false)
 
   useEffect(() => {
     const container = messagesScrollRef.current
@@ -146,7 +150,19 @@ export function ChatPage() {
           <div className="flex min-w-0 items-center gap-3">
             <Avatar name={partner?.name ?? 'Seu amor'} src={partner?.avatar} size="lg" />
             <div className="min-w-0">
-              <p className="truncate font-display text-xl text-[var(--text-primary)] sm:text-3xl">{partner?.name ?? 'Seu amor'}</p>
+              <div className="flex min-w-0 items-center gap-2">
+                <p className="truncate font-display text-xl text-[var(--text-primary)] sm:text-3xl">{partner?.name ?? 'Seu amor'}</p>
+                {partner ? (
+                  <button
+                    type="button"
+                    onClick={() => setEditingNickname(true)}
+                    className="shrink-0 rounded-full p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    aria-label="Mudar o nome"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                ) : null}
+              </div>
               <div className="mt-1 flex flex-wrap items-center gap-2">
                 <StatusPill
                   online={partner ? onlineIds.has(partner.id) : false}
@@ -357,6 +373,14 @@ export function ChatPage() {
             {activeMedia.name ? <p className="text-sm text-white/80">{activeMedia.name}</p> : null}
           </div>
         </div>
+      ) : null}
+
+      {editingNickname ? (
+        <NicknameDialog
+          nickname={nickname}
+          onClose={() => setEditingNickname(false)}
+          onSave={handleSaveNickname}
+        />
       ) : null}
     </div>
   )
